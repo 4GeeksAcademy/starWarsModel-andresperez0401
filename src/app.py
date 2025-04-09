@@ -31,12 +31,16 @@ setup_admin(app)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
-# generate sitemap with all your endpoints
+# generate sitemap with all your endpoints, devuelve todas las rutas del sitio cuando se entra a la ruta principal
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
+
+
+#-----------------------------------------Get Todas las Personas-----------------------------------------------------------------------------
+
+@app.route('/people', methods=['GET'])
 def handle_hello():
 
     response_body = {
@@ -45,6 +49,103 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+
+#-----------------------------------------Get People por id-------------------------------------------------------------------------------------
+
+@app.route('/people/<int:people_id>', methods=['GET'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+#-----------------------------------------Get Todos los Planetas-----------------------------------------------------------------------------
+
+@app.route('/planets', methods=['GET'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+
+#-----------------------------------------Get Planet por id-------------------------------------------------------------------------------------
+
+@app.route('/planet/<int:people_id>', methods=['GET'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+
+#-----------------------------------------Get Todos los Usuarios-----------------------------------------------------------------------------
+
+@app.route('/users', methods=['GET'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+
+#-----------------------------------------Get Todos los Favoritos de un usuari0-----------------------------------------------------------------------------
+
+@app.route('/users/favorites', methods=['GET'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+
+#-----------------------------------------Agrega un planet favorito al usuario actual con el id: planet_id, tambien elimina-----------------------------------------------------------------------------
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['POST', 'DELETE'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+
+#-----------------------------------------Agrega un people favorito al usuario actual con el id: people_id, tambien elimina-----------------------------------------------------------------------------
+
+@app.route('/favorite/people/<int:people_id>', methods=['POST', 'DELETE'])
+def handle_hello():
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+
+
+
+
+
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
