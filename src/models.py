@@ -65,7 +65,7 @@ class Character(db.Model):
 
     def serialize(self):
         return {
-            "id_charcater": self.id_character,
+            "id_characater": self.id_character,
             "character_name": self.name
         }
 
