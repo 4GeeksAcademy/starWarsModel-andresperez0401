@@ -44,14 +44,36 @@ def sitemap():
 
 
 # with app.app_context():
-#     char = Character()
-#     char.id_character = 54
-#     char.name = "andyJose"
 
-#     db.session.add(char)
+
+#     # char = Character()
+#     # char.id_character = 54
+#     # char.name = "andyJose"
+
+#     # db.session.add(char)
+#     # db.session.commit()
+
+#     planet = Planet()
+#     planet.id_planet = 14
+#     planet.name = "Marte"
+
+#     user = User()
+#     user.id = 1
+#     user.email = "andres@gmail.com"
+#     user.password = "12345678"
+#     user.is_active = True
+
+#     favorite = Favorite()
+#     favorite.id_fav = 1
+#     favorite.user_id = 1
+#     favorite.planet_id = 14
+
+#     db.session.add(planet)
+#     db.session.add(user)
+#     db.session.add(favorite)
 #     db.session.commit()
 
-# -----------------------------------------Get Todas las Personas-----------------------------------------------------------------------------
+    # -----------------------------------------Get Todas las Personas-----------------------------------------------------------------------------
 
 
 @app.route('/people', methods=['GET'])
@@ -131,7 +153,7 @@ def get_users():
 
     all_users = User.query.all()
     all_users = list(map(lambda x: x.serialize(), all_users))
-  
+
     if all_users is None:
         response_body = {
             "msg": "Not users found"
@@ -143,38 +165,139 @@ def get_users():
 
 # -----------------------------------------Get Todos los Favoritos de un usuari0-----------------------------------------------------------------------------
 
-@app.route('/users/favorites', methods=['GET'])
-def get_users_favorites():
+@app.route('/users/favorites/<int:user_id>', methods=['GET'])
+def get_users_favorites(user_id):
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    user = User.query.get(user_id)
 
-    return jsonify(response_body), 200
+    if user is None:
+        response_body = {
+            "msg": "User  { " + str(user_id) + " } not found"
+        }
+        return jsonify(response_body), 404
+
+    all_user_favorites = []
+
+    for favorite in user.favorites:
+
+        data = {
+            "id_favorite": favorite.id_fav,
+            "user_id": favorite.user_id
+        }
+
+        if favorite.planet_id:
+            planet = favorite.planet
+            data["planet"] = planet.serialize()
+
+        if favorite.character_id:
+            character = favorite.character  # Acceder directamente desde la relación
+            data["character"] = character.serialize()
+
+        all_user_favorites.append(data)
+
+    return jsonify(all_user_favorites), 200
 
 
 # -----------------------------------------Agrega un planet favorito al usuario actual con el id: planet_id, tambien elimina-----------------------------------------------------------------------------
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['POST', 'DELETE'])
-def manage_favorite_planet():
+def manage_favorite_planet(planet_id):
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    # Obtenemos los datos de ambos metodos: POST y DELETE
+    data = request.get_json()
 
-    return jsonify(response_body), 200
+    if data is None:
+        return "Cuerpo de la solicitud vacío", 400
+
+    if "email" not in data:
+        return "Se debe especificar el email del usuario", 400
+
+    planet = Planet.query.get(planet_id)
+
+    if planet is None:
+        return "El id de planeta { " + str(planet_id) + " } no se encontró", 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    if user is None:
+        return "El email enviado no fue encontrado", 400
+
+    # Si es POST
+    if request.method == 'POST':
+
+        favorite = Favorite()
+        favorite.user_id = user.id
+        favorite.planet_id = planet_id
+
+        db.session.add(favorite)
+        db.session.commit()
+
+        return "Planeta agregado como favorito al usuario: " + user.email, 200
+
+    # SI ES DELETE
+    elif request.method == 'DELETE':
+
+        favorite = Favorite.query.filter_by(
+            planet_id=planet_id, user_id=user.id).first()
+
+        if favorite is None:
+            return "El Planeta: " + str(planet_id) + " , no fue encontrado para el usuario: " + user.email, 400
+
+        db.session.delete(favorite)
+        db.session.commit()
+
+        return "Favorito eliminado exitosamente", 200
 
 
 # -----------------------------------------Agrega un people favorito al usuario actual con el id: people_id, tambien elimina-----------------------------------------------------------------------------
 
 @app.route('/favorite/people/<int:people_id>', methods=['POST', 'DELETE'])
-def manage_favorite_people():
+def manage_favorite_people(people_id):
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+   # Obtenemos los datos de ambos metodos: POST y DELETE
+    data = request.get_json()
 
-    return jsonify(response_body), 200
+    if data is None:
+        return "Cuerpo de la solicitud vacío", 400
+
+    if "email" not in data:
+        return "Se debe especificar el email del usuario", 400
+
+    people = Character.query.get(people_id)
+
+    if people is None:
+        return "El id del caracter { " + str(people_id) + " } no se encontró", 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    if user is None:
+        return "El email enviado no fue encontrado", 400
+
+    # Si es POST
+    if request.method == 'POST':
+
+        favorite = Favorite()
+        favorite.user_id = user.id
+        favorite.character_id = people_id
+
+        db.session.add(favorite)
+        db.session.commit()
+
+        return "People agregado como favorito al usuario: " + user.email, 200
+
+    # SI ES DELETE
+    elif request.method == 'DELETE':
+
+        favorite = Favorite.query.filter_by(
+            character_id=people_id, user_id=user.id).first()
+
+        if favorite is None:
+            return "People: " + str(people_id) + " , no fue encontrado para el usuario: " + user.email, 400
+
+        db.session.delete(favorite)
+        db.session.commit()
+
+        return "Favorito eliminado exitosamente", 200
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------

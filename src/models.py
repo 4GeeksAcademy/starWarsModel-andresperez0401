@@ -13,7 +13,7 @@ class User(db.Model):
     __tablename__ = 'user'
 
     # Atributos de la clase User
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
@@ -38,7 +38,8 @@ class Planet(db.Model):
     __tablename__ = 'planet'
 
     # Atributos de la clase planeta
-    id_planet: Mapped[int] = mapped_column(primary_key=True)
+    id_planet: Mapped[int] = mapped_column(
+        primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     img_link: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=True)
@@ -58,7 +59,8 @@ class Character(db.Model):
     __tablename__ = 'character'
 
     # Atributos de la clase planeta
-    id_character: Mapped[int] = mapped_column(primary_key=True)
+    id_character: Mapped[int] = mapped_column(
+        primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     img_link: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=True)
@@ -76,7 +78,7 @@ class Favorite(db.Model):
     __tablename__ = 'favorite'
 
     # Atributos de la clase
-    id_fav: Mapped[int] = mapped_column(primary_key=True)
+    id_fav: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     # Apunta siempre al usuario del favorito
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
