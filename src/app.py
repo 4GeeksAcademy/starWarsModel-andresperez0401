@@ -84,7 +84,7 @@ def get_all_people():
     # Otra alternativa para serializar, cuando se consulta al modelo no se pude transformar directamente a un json, por eso se serializa
     # all_people = [person.serialize() for person in Person.query.all()]
 
-    if all_people is None:
+    if not all_people:
         response_body = {
             "msg": "Not people found"
         }
@@ -120,7 +120,7 @@ def get_planets():
     # Otra alternativa para serializar, cuando se consulta al modelo no se pude transformar directamente a un json, por eso se serializa
     # all_people = [person.serialize() for person in Person.query.all()]
 
-    if all_planets is None:
+    if not all_planets:
         response_body = {
             "msg": "Not planets found"
         }
@@ -154,7 +154,7 @@ def get_users():
     all_users = User.query.all()
     all_users = list(map(lambda x: x.serialize(), all_users))
 
-    if all_users is None:
+    if not all_users:
         response_body = {
             "msg": "Not users found"
         }
